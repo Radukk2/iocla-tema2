@@ -2,8 +2,8 @@
 
     ;;
 struc avg
-    .quo resb 1
-    .remain resb 1
+    .quo resw 1
+    .remain resw 1
 endstruc
     ;;
 struc proc
@@ -86,14 +86,34 @@ not_5:
     xor edi, edi
 jump_vector:
     mov esi, [prio_result + edi]
-    PRINTF32 `%u \x0`, esi
     xor esi, esi
     mov esi, [time_result + edi]
-    PRINTF32 `%u\t\x0`, esi
     add edi, 4
     cmp edi, 20
     jnz jump_vector
-    PRINTF32 `\n\x0`
+    xor ecx, ecx
+vector:
+    push eax
+    xor eax, eax
+    mov eax, [time_result + ecx * 4]
+    mov ebx, [prio_result + ecx * 4]
+    cmp ebx, 0
+    je jump_zero
+    cdq
+    idiv  ebx
+    mov edi, eax
+    pop eax
+    mov [eax + avg.quo + 4 * ecx], di
+    mov [eax + avg.remain + 4 * ecx], dx
+    jmp new_skip
+jump_zero:
+    pop eax
+    mov [eax + avg.quo + 4 * ecx], word 0
+    mov [eax + avg.remain + 4 * ecx], word 0
+new_skip:
+    inc ecx
+    cmp ecx, 5
+    jnz vector
     ;; Your code ends here
     
     ;; DO NOT MODIFY
