@@ -1,57 +1,45 @@
 %include "../include/io.mac"
 
-;; defining constants, you can use these as immediate values in your code
-LETTERS_COUNT EQU 26
-
-section .data
-    extern len_plain
+struc proc
+    .pid: resw 1
+    .prio: resb 1
+    .time: resw 1
+endstruc
 
 section .text
-    global rotate_x_positions
-    global enigma
-    extern printf
+    global sort_procs
 
-; void rotate_x_positions(int x, int rotor, char config[10][26], int forward);
-rotate_x_positions:
+extern printf
+sort_procs:
     ;; DO NOT MODIFY
-    push ebp
-    mov ebp, esp
+    enter 0,0
     pusha
 
-    mov eax, [ebp + 8]  ; x
-    mov ebx, [ebp + 12] ; rotor
-    mov ecx, [ebp + 16] ; config (address of first element in matrix)
-    mov edx, [ebp + 20] ; forward
-    ;; DO NOT MODIFY
-    ;; TODO: Implement rotate_x_positions
-    ;; FREESTYLE STARTS HERE
-
-
-    ;; FREESTYLE ENDS HERE
-    ;; DO NOT MODIFY
-    popa
-    leave
-    ret
+    mov edx, [ebp + 8]      ; processes
+    mov eax, [ebp + 12]     ; length
     ;; DO NOT MODIFY
 
-; void enigma(char *plain, char key[3], char notches[3], char config[10][26], char *enc);
-enigma:
-    ;; DO NOT MODIFY
-    push ebp
-    mov ebp, esp
-    pusha
-
-    mov eax, [ebp + 8]  ; plain (address of first element in string)
-    mov ebx, [ebp + 12] ; key
-    mov ecx, [ebp + 16] ; notches
-    mov edx, [ebp + 20] ; config (address of first element in matrix)
-    mov edi, [ebp + 24] ; enc
-    ;; DO NOT MODIFY
-    ;; TODO: Implement enigma
-    ;; FREESTYLE STARTS HERE
-
-
-    ;; FREESTYLE ENDS HERE
+    ;; Your code starts here
+    xor ebx, ebx
+    xor ecx, ecx
+    mov esi, 0
+    mov edi, 5
+    dec eax
+    imul eax, 5
+bubble_sort1:
+    mov bl, byte [edx + proc.prio + esi]
+    add eax, 5
+bubble_sort2:
+    mov cl, byte [edx + proc.prio + edi]
+    add edi, 5
+    cmp edi, eax
+    jz bubble_sort2
+    sub eax, 5
+    add esi, 5
+    cmp esi, eax
+    jnz bubble_sort1
+    ;; Your code ends here
+    
     ;; DO NOT MODIFY
     popa
     leave
